@@ -1,0 +1,43 @@
+# .gitignore for a KiCad board repository
+
+# Backups, autosaves, and locks
+*.000
+*.bak
+*.bck
+*.kicad_pcb-bak
+*.kicad_sch-bak
+*-backups
+*-cache*
+*-bak
+*-bak*
+*~
+~*
+_autosave-*
+\#auto_saved_files\#
+*.tmp
+*-save.pro
+*-save.kicad_pcb
+fp-info-cache
+~*.lck
+**/*-backups/*.zip
+
+# Per-user state
+*.kicad_prl
+.history
+
+# Regenerated exports: netlists, autorouter files, bills of materials.
+# A table the repository keeps on purpose needs its own line here, starting with an exclamation mark.
+*.net
+*.dsn
+*.ses
+*.xml
+*.csv
+
+# The part converter's cache, when it keeps one
+.easyeda_cache/
+
+# One scratch folder for reports, plots, and renders
+.scratch/
+
+# Python
+__pycache__/

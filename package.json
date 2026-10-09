@@ -1,0 +1,12 @@
+{
+  "name": "pcb-repository-opinions",
+  "version": "1.0.0",
+  "description": "Checks what kicad-cli and a KiCad board project's own files can answer, with one PASS or FAIL line per check.",
+  "type": "module",
+  "bin": {
+    "pcb-repository-opinions": "scripts/check.mjs"
+  },
+  "files": [
+    "scripts/check.mjs"
+  ]
+}
