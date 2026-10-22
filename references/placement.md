@@ -15,7 +15,9 @@ Every part sits where its job puts it. Placement decides whether the board route
 - A decoupling capacitor's ground pad faces a via or the pour.
 - Follow each power part's datasheet placement: input capacitor, switch, inductor, and output capacitor form one tight loop, with the feedback node away from it.
 - Put protection at the entry connector with a short path to its return.
-- Keep the board compact. Pull parts toward the middle and toward what they connect to. A part alone in a corner is a question.
+- Keep the board compact and its outline near square. Pull parts toward the middle and toward what they connect to. A part alone in a corner is a question.
+- A pull resistor sits between the two pins it joins, never out at an edge with its supply carried round to it.
+- Where a board may be trimmed by hand, keep pads, tracks, and fill out of the corners.
 - Follow the exact antenna keepout from the module's maker, on every layer, including a neighboring board on the panel.
 - Keep programming, test, and recovery contacts reachable after assembly.
 - State the target outline in the README before layout starts, and draw it on the edge layer.
@@ -30,6 +32,10 @@ Every part sits where its job puts it. Placement decides whether the board route
 ## Printed Text Is A Constraint
 
 Text that is already on the board and may not move, such as a net name beside each connection point, takes real area. No pad sits under it. Measure the text boxes first and treat what remains as the board.
+
+On a board built as small as its parts allow, decide the connection points and the box each name needs as one step, before any part is placed. Names fitted into leftover space afterwards end up beside the wrong point. Text does not set such a board's size: shorten a name, turn a row of names, or move them to the other side before the outline grows.
+
+Try a layout rule on one board before many boards follow it. A rule that reads well can fit none of them.
 
 ## When Routing Fails
 

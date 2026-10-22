@@ -1,6 +1,6 @@
 # Routing
 
-Route by intent. Every net is placed by someone who knows where it is going and why, in an order that gives the nets that matter the copper they need. A clean check is the floor, not the judgment: routing manners count.
+Route by intent. Every net is placed by someone who knows where it is going and why, in an order that gives the nets that matter the copper they need. A clean check is the floor, not the judgment.
 
 ## Order
 
@@ -28,8 +28,10 @@ Wire it as a four-terminal connection even when the part has two terminals.
 
 ## Manners
 
+Route this way. In a review, a route that carries its current, keeps its return path, meets its clearances, and follows its datasheet's layout is not a finding, whatever its style.
+
 - No corner of 90 degrees or sharper. Turn at 45 degrees, and cut a right angle with a short diagonal.
-- A trace goes toward its target. One that leaves a pad pointing away, loops round a part, passes under another chip, or doubles back is a finding.
+- A trace goes toward its target. It does not leave a pad pointing away, loop round a part, pass under another chip, or double back.
 - No trace hugs the board edge to get past something.
 - A supply is not carried round the board to reach a point close by.
 - Keep feedback and sense nodes away from noisy copper, and take them from the point the datasheet names.

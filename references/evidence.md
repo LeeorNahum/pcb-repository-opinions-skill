@@ -22,4 +22,4 @@ Check every part pin by pin against the manufacturer's datasheet, for the exact 
 
 Then work out what the circuit does in each state it can be in: the controller unpowered, one supply present without another, each power-up order, and every combination of control inputs the controller can produce. Write down what each output does in each.
 
-Record what was verified, what remains open, and the consequence of getting it wrong in the board's README.
+Record what was verified, what remains open, and the consequence of getting it wrong in the README.

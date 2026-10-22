@@ -10,9 +10,11 @@ For boards joined by soldered wires:
 
 - A connection is a row of bare plated holes near the edge with no header part. Nothing is placed by the assembler, and the wires are soldered straight in.
 - Pitch follows who solders it: 2.54 mm with a 1.0 mm drill, which takes a standard 0.64 mm square header pin, where wires are soldered by hand or a header may be fitted later, 1.27 mm with a drill near 0.45 mm on a compact board or for a pogo row.
+- Size a hole for the wire that goes in it. The wire's own current limit rates the connection, not the hole, so a supply above what the thin wire carries gets a larger hole for a heavier wire.
 - Double the holes on a power path, and give a power row a second ground.
 - Put a ground hole beside a sensitive pair.
 - Leave room beside each hole for its printed net name and for an iron.
+- On a board that stands alone and is wired point to point, a connection need not sit in a row or at an edge. A single hole wherever it makes the board smaller is fine, with ground still marked by a square pad.
 - Castellated edges are not the default. The electrical connection and the mechanical breakaway are separate decisions.
 
 Ask before changing a connection's pin order, pitch, or position once another board or firmware depends on it.

@@ -57,7 +57,7 @@ Checks, each from kicad-cli or the project's own files:
              in that letter case, and sits under lib/. Every 3D model is a file in the
              project or sits under KiCad's stock model folder, where its presence is
              not checked. A footprint folder beside the project file is taken as
-             drawn for the board. It does not prove that a symbol or footprint is
+             drawn for the project. It does not prove that a symbol or footprint is
              correct.
   supplier   Every part listed in the bill of materials has its supplier number.
              Parts marked do-not-populate or excluded from the bill are not counted.
@@ -309,7 +309,7 @@ function checkLibraries(folder, boardText) {
       else if (!existsExactly(folder, inside[1])) problems.push(`${table}: ${uri} is not in the project folder under that exact name`);
       else {
         // The one library allowed outside lib/ is a footprint folder beside the project file,
-        // which is taken as drawn for the board itself.
+        // which is taken as drawn for the project itself.
         const steps = inside[1].split(/[\\/]+/).filter(Boolean);
         const ownFootprints = table === "fp-lib-table" && steps.length === 1 && steps[0].endsWith(".pretty");
         if (steps[0] !== "lib" && !ownFootprints) problems.push(`${table}: ${uri} is not under lib/`);

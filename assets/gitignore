@@ -33,6 +33,11 @@ fp-info-cache
 *.xml
 *.csv
 
+# Fabrication outputs: the order set the repository's script writes,
+# and the Fabrication Toolkit plugin's own output
+Fabrication/
+production/
+
 # The part converter's cache, when it keeps one
 .easyeda_cache/
 

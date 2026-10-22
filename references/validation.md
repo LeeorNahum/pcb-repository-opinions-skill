@@ -21,7 +21,7 @@ Run the check script after the final edit. When a row is open, say the board is 
 ## Reading The Reports
 
 - Report by category, never only a total: new errors from the change, existing errors outside it, pin-type noise from imported symbols, library-copy mismatches, intentional no-connects, and real dangling labels, clearance failures, or parity failures.
-- A warning is accepted only with a reason and an owner, written beside the check results in the board's README.
+- A warning is accepted only with a reason and an owner, written beside the check results in the README.
 - Ask of each check what would have to be true for it to pass while the thing it names is broken. A courtyard check passes when the courtyard is drawn wrong. Break the guard on a copy, see the check fail, then trust it.
 
 ## Looking At The Board

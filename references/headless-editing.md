@@ -17,6 +17,8 @@ These routes hold on KiCad 10. Check each against the installed version before r
 - Run `git status` before the first edit, and leave uncommitted changes that are not yours in place.
 - Saving a board through `pcbnew` can rewrite the project file with its keys reordered. Copy the project file before the save and put it back afterward unless a setting in it was meant to change.
 - Use an interpreter that can import `pcbnew`. Where KiCad ships its own Python, that is the one.
+- In KiCad 10's `pcbnew`, add a footprint to the board before flipping it to the back. Flipping one that has no board ends the process with no message.
+- A zone filled through KiCad 10's `pcbnew` does not pull back from an unplated hole. Put a rule area that keeps the fill out round each one.
 
 ## A Board Built By Script
 

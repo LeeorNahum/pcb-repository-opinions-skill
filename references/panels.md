@@ -6,6 +6,8 @@ Check the assembly panel as a physical object. Tab strength, component edge clea
 - Keep the whole panel inside the fabricator's low-price size, and read that size and price on the order day.
 - No copper crosses a snap line unless a panel-level connection is intended. Check for accidental copper between circuits that will be separated.
 - Keep pads, holes, antennas, and fragile parts clear of tabs, routed gaps, V-cuts, and mouse bites. The edge stays rough after snapping.
+- A tab's width and its holes come from the fabricator's capability page whatever the board's size. A board too small for one is laid out again so two opposite edges have a clear stretch, not given a narrower tab.
+- Work out where each board's tabs land before its connection points are placed. Points near every edge leave no place for a tab.
 - A part that overhangs its board edge needs a panel gap as deep as the overhang.
 - Where the assembler's process needs them, add rails, fiducials, and tooling holes as its panel guidance gives them.
 - Check the first board in the fabricator's viewer before repeating a pattern across the panel.

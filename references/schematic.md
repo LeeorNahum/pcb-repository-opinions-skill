@@ -5,7 +5,7 @@ Connectivity comes before appearance, and both are required. A label that looks 
 ## Connectivity
 
 - Determine whether the design is flat or hierarchical before adding labels. Same-name labels on one flat sheet are one net, even when boxes imply separation.
-- Use scoped net names when independent circuits share a sheet or a panel. Reuse a generic rail name only when shared copper is intended.
+- Use scoped net names when independent circuits share a sheet, a project, or a panel. A power symbol joins its net across every sheet, so reuse a generic rail name only when shared copper is intended.
 - A net that crosses between boards is spelled the same on both sides.
 - Place label anchors and wire ends on the electrical grid.
 - Join duplicated connector pins that carry one signal, unless the connector or the protection topology needs separate paths.
@@ -19,7 +19,9 @@ Connectivity comes before appearance, and both are required. A label that looks 
 
 - Bias every address, mode, enable, reset, and configuration pin unless the datasheet says it may float. Its default is the safe state with the controller unpowered.
 - Pull resistors are as high as the input allows. Keep a lower value only where a datasheet or a bus's speed demands one, and write the reason in the part's `Function` field.
-- Pull-ups for a bus shared between boards exist in exactly one place.
+- Leave out a pull the controller can supply from its own pin in software, unless the pin must hold its state while the controller is off.
+- Pull-ups for a bus shared between boards exist in exactly one place in the assembled system. A generic board whose system is not known carries its own pair as an option the builder removes or leaves open, and the sheet says so.
+- A strap that needs a default and an alternative is a fitted resistor for the default and an open solder bridge for the alternative. Say on the sheet what the resistor draws once the bridge is closed, and that removing it stops that.
 - Pulls that hold the safe state with the controller off stay on the board that owns the input.
 - Keep a device at the address its firmware driver assumes, and tie address pins explicitly.
 

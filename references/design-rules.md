@@ -20,7 +20,7 @@ The project file owns each number. Every document that states a rule, such as a 
 - Then check voltage drop over the whole series path, with every connector and joined board in it. A path that passes on each board can fail as a whole.
 - A net that carries more than its class allows gets its own class, named for what it carries. A class that holds a net above its width is a defect, and a class filled by name pattern hides it.
 - A differential pair's width and gap come from the stackup and its impedance target, not from current. On a thick 2-layer board the pair is wide, and that width is not a current rating. Recompute it when the board thickness changes.
-- A short neck into a pin may be as narrow as the pin, and a sense branch on a power net stays thin. State that allowance once, beside the net classes in the board's README. A board that breaks its own stated width rule without saying so is a finding.
+- A short neck into a pin may be as narrow as the pin, and a sense branch on a power net stays thin. State that allowance once, beside the net classes in the README. A board that breaks its own stated width rule without saying so is a finding.
 - KiCad's design rules check does not flag a track narrower than its net class. The check script lists each one. Where a width must hold, add a custom rule with a minimum for that net.
 
 ## Starting Numbers
@@ -34,8 +34,8 @@ For JLCPCB, 2 layers, 1 oz copper. Recheck each against the fabricator's own cap
 | Plated hole ring | 0.18 mm | The floor. 0.25 mm recommended |
 | Copper to a routed edge | 0.2 mm | 0.4 mm from a V-cut |
 | Silkscreen to pad | 0.15 mm | Where text overlaps a pad opening, the opening wins |
-| Silkscreen line | 0.15 mm | |
-| Silkscreen text height | 1.0 mm | The published minimum |
+| Silkscreen line | 0.15 mm | 0.1 mm stroke on the high-precision silkscreen option, from the character design guide |
+| Silkscreen text height | 1.0 mm | The published minimum, or 0.8 mm on the high-precision silkscreen option, from the character design guide |
 
 Default net classes, for a board with room and for a compact one:
 
@@ -44,9 +44,7 @@ Default net classes, for a board with room and for a compact one:
 | Signal track | 0.2 mm | 0.15 mm |
 | Power track, to about 1 A | 0.5 mm | 0.4 mm |
 | Clearance | 0.2 mm | 0.15 mm |
-| Printed text height | 0.8 mm | 0.8 mm |
-
-The text height is below the fabricator's published minimum on purpose. Judge each label for readability in the fabricator's viewer.
+| Printed text height | 1.0 mm | 1.0 mm |
 
 ## Stackup
 

@@ -40,6 +40,9 @@ const ignore = (kind, key) => (t) => {
   (kind === "erc" ? project.erc : project.board.design_settings).rule_severities[key] = "ignore";
   return JSON.stringify(project);
 };
+// Every schematic sheet of a copy, the root and each hierarchical sheet, outside the part libraries.
+const sheetsOf = (folder) => readdirSync(folder, { recursive: true }).map(String).filter((p) => p.endsWith(".kicad_sch") && !/^lib[\\/]/.test(p));
+const eachSheet = (folder, change) => sheetsOf(folder).forEach((p) => writeFileSync(join(folder, p), change(readFileSync(join(folder, p), "utf8"))));
 const file = (folder, ext) => join(folder, ext.startsWith(".") ? `${name}${ext}` : ext);
 const edit = (folder, ext, change) => writeFileSync(file(folder, ext), change(readFileSync(file(folder, ext), "utf8")));
 
@@ -137,7 +140,7 @@ test("a project with local settings gets them back byte for byte", () => {
   return hashes(folder) === before ? null : "the check changed a file in the project";
 });
 
-breaks("every wire removed from the schematic", "erc", (f) => edit(f, ".kicad_sch", (t) => removeBlocks(t, "wire")));
+breaks("every wire removed from every sheet", "erc", (f) => eachSheet(f, (t) => removeBlocks(t, "wire")));
 breaks("a 10 mm minimum clearance in the project", "drc", (f) => edit(f, ".kicad_pro", (t) => {
   const project = JSON.parse(t);
   project.board.design_settings.rules.min_clearance = 10;
@@ -147,13 +150,60 @@ breaks("the pin connection check switched off", "erc", (f) => edit(f, ".kicad_pr
 breaks("the clearance check switched off", "drc", (f) => edit(f, ".kicad_pro", ignore("drc", "clearance")));
 breaks("every track removed", "routed", (f) => edit(f, ".kicad_pcb", (t) => removeBlocks(removeBlocks(t, "segment"), "arc")));
 breaks("one footprint removed from the board", "parity", (f) => edit(f, ".kicad_pcb", (t) => {
+  // A footprint drawn on the board alone, such as a panel hole, has no symbol to differ from.
   let done = false;
-  return removeBlocks(t, "footprint", () => !done && (done = true));
+  return removeBlocks(t, "footprint", (block) => !done && /\(path "/.test(block) && (done = true));
 }));
 breaks("every shape removed from Edge.Cuts", "outline", (f) => edit(f, ".kicad_pcb", (t) =>
   ["gr_line", "gr_rect", "gr_arc", "gr_circle", "gr_poly", "gr_curve"].reduce((text, kind) => removeBlocks(text, kind, (b) => b.includes('"Edge.Cuts"')), t)));
 breaks("the saved zone fills removed", "zones", (f) => edit(f, ".kicad_pcb", (t) => removeBlocks(t, "filled_polygon")));
-breaks("every supplier number blanked", "supplier", (f) => edit(f, ".kicad_sch", (t) => t.replace(/\(property "LCSC Part" "[^"]*"/g, '(property "LCSC Part" ""')));
+// Blank the "LCSC Part" field of placed symbols whose footprint passes the test, in every sheet of the copy,
+// up to the limit. Returns the references blanked.
+function blankSupplier(folder, limit = Infinity, test = () => true) {
+  const blanked = [];
+  for (const entry of sheetsOf(folder)) {
+    const path = join(folder, entry);
+    const text = readFileSync(path, "utf8");
+    let out = "";
+    let from = 0;
+    const open = /\(symbol\s+\(lib_id "/g;
+    for (let m; (m = open.exec(text)); ) {
+      let depth = 0;
+      let end = m.index;
+      for (let inString = false; end < text.length; end++) {
+        const c = text[end];
+        if (inString) {
+          if (c === "\\") end++;
+          else if (c === '"') inString = false;
+        } else if (c === '"') inString = true;
+        else if (c === "(") depth++;
+        else if (c === ")" && --depth === 0) break;
+      }
+      const block = text.slice(m.index, end + 1);
+      const footprint = (block.match(/\(property "Footprint" "([^"]*)"/) || [])[1] || "";
+      if (blanked.length < limit && test(footprint) && /\(property "LCSC Part" "[^"]+"/.test(block)) {
+        out += text.slice(from, m.index) + block.replace(/\(property "LCSC Part" "[^"]*"/, '(property "LCSC Part" ""');
+        from = end + 1;
+        blanked.push((block.match(/\(property "Reference" "([^"]*)"/) || [])[1]);
+      }
+      open.lastIndex = end + 1;
+    }
+    writeFileSync(path, out + text.slice(from));
+  }
+  return blanked;
+}
+
+breaks("every supplier number blanked", "supplier", (f) => blankSupplier(f));
+let blankedPart = "";
+breaks("the supplier number blanked on one part", "supplier", (f) => {
+  [blankedPart] = blankSupplier(f, 1);
+  if (!blankedPart) throw new Error("no part has a supplier number to blank");
+}, (r) => (check(r, "supplier").details.some((d) => d.startsWith(`${blankedPart} (`)) ? null : `${blankedPart} is not named as missing its number`));
+let blankedPassive = "";
+breaks("the supplier number blanked on one stock resistor or capacitor", "supplier", (f) => {
+  [blankedPassive] = blankSupplier(f, 1, (footprint) => /^(Resistor|Capacitor)_/.test(footprint));
+  if (!blankedPassive) throw new Error("no stock resistor or capacitor has a supplier number to blank");
+}, (r) => (check(r, "supplier").details.some((d) => d.startsWith(`${blankedPassive} (`)) ? null : `${blankedPassive} is not named as missing its number`));
 
 breaks("a table path made absolute", "libraries", (f) => edit(f, "sym-lib-table", (t) => t.replace("${KIPRJMOD}", f.replace(/\\/g, "/"))),
   (r) => (check(r, "erc").ok ? null : "erc failed too, so the absolute path did not resolve and the test proves less than it claims"));
@@ -207,7 +257,7 @@ test("two projects of one name, one with no schematic: exit 1, and the whole one
   mkdirSync(join(parent, "b"));
   copy(join(parent, "a"));
   rmSync(file(copy(join(parent, "b")), ".kicad_sch"));
-  // Each project sits one level down, the layout of a repository with a folder per board.
+  // Each project sits one level down, in a folder that holds several projects.
   renameSync(join(parent, "a", name), join(parent, "whole"));
   renameSync(join(parent, "b", name), join(parent, "broken"));
   rmSync(join(parent, "a"), { recursive: true });

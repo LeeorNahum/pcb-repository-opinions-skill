@@ -4,7 +4,7 @@ description: "Use for any circuit board design work: planning, drawing a schemat
 compatibility: "The bundled check script requires Node.js 18 or later and an installed KiCad that provides `kicad-cli`."
 metadata:
   author: "Leeor Nahum"
-  version: "1.0.0"
+  version: "2.0.0"
 ---
 
 # PCB Repository Opinions
@@ -28,6 +28,7 @@ Prefer these unless the board has a stronger reason not to. Swap the tool, keep 
 | Fabricator and assembler | JLCPCB | The board needs a process it does not offer |
 | Parts catalog | LCSC, with the number in a symbol field named `LCSC Part` | Another assembler places the board |
 | Part converter | `easyeda2kicad`, through the repository's own wrapper when it has one | The manufacturer publishes a checked KiCad asset |
+| Assembler rotation fields | The KiCad Fabrication Toolkit plugin's field names | Another export tool reads its own fields |
 | Common passives | KiCad's stock symbols and footprints | The part has no stock equivalent |
 
 ## Reference Loading
@@ -43,7 +44,7 @@ Repository:
 Parts:
 
 - Read [libraries.md](references/libraries.md) when importing, creating, replacing, or approving a symbol, footprint, or 3D model, or editing a library table.
-- Read [part-fields.md](references/part-fields.md) when choosing a part or package, setting symbol fields, carrying a supplier number, or producing a bill of materials.
+- Read [part-fields.md](references/part-fields.md) when choosing a part, a package, or a passive's value, setting symbol fields, carrying a supplier number, or producing a bill of materials.
 
 Design:
 
@@ -58,18 +59,18 @@ Design:
 Shipping:
 
 - Read [validation.md](references/validation.md) after any hardware-file change, before calling a board checked or done, and when reviewing a repository for electrical, visual, or manufacturing readiness.
-- Read [fabrication.md](references/fabrication.md) when exporting Gerbers, drill files, a bill of materials, or a placement file, and before any order.
+- Read [fabrication.md](references/fabrication.md) when exporting Gerbers, drill files, a bill of materials, or a placement file, when correcting a part's rotation for the assembler, and before and after any order.
 
 ## Core Non-Negotiables
 
-- One project makes one board. Work in the project the repository provides.
+- One repository holds one KiCad project, and a product of several boards draws each board as a sheet of it. Work in the project the repository provides.
 - A clone opens with nothing missing. Every imported part lives under the project's `lib/` folder and resolves through `${KIPRJMOD}`.
 - Make the smallest coherent change. Preserve UUIDs, references, fields, net names, and formatting that do not need to change, and leave other people's uncommitted work alone.
 - Electrical intent is data. Net classes, clearances, and fabricator rules live in the project and rules files, and every document that states one agrees with them.
 - A converted part is a draft until it is checked against the manufacturer's drawing.
 - A power trace is as wide as its net's real worst-case current needs, never as wide as its name suggests.
 - The schematic is reviewed before routing starts, and placement is judged before the first track.
-- The nets that matter are routed by intent, in an order that gives them the copper they need. A clean check is the floor: routing manners count.
+- The nets that matter are routed by intent, in an order that gives them the copper they need. A clean check is the floor, and a route that does its job is never a finding for its style.
 - Current capacity, return paths, protection, thermal behavior, assembly, and physical access are implementation constraints, not later polish.
 - Checks answer by category, not by a total: ERC, DRC, parity, unrouted nets, the datasheet read, and a look at the picture are separate facts.
 - Never suppress a warning to lower a count. Fix the model the warning points at.
@@ -95,7 +96,7 @@ When invoked to audit a PCB repo:
 4. Compare every document that states a rule with the project file.
 5. Check every imported part against its datasheet: pin table, land pattern, courtyard, and pin 1 mark.
 6. Compare the exported bill of materials with the documented part list, and name every fitted part that is excluded from it.
-7. Look at a plot of each copper layer and a render of each side for placement, routing manners, printed text, and missing 3D models.
+7. Look at a plot of each copper layer and a render of each side for placement, routes that fail their job, printed text, and missing 3D models.
 8. Confirm fabrication outputs come from the tracked files by one command and that nothing generated is edited by hand.
 9. Report findings as a Markdown table of category, file, and finding, with introduced defects apart from inherited ones.
 
